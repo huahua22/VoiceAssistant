@@ -1,23 +1,22 @@
 package com.example.administrator.voiceassistant.view;
 
+import android.content.Context;
 import android.content.Intent;
-
-import com.example.administrator.voiceassistant.MainActivity;
 
 
 /**
  * 发信息界面
  */
 public class MessageView {
-    private MainActivity mActivity;
+    private Context context;
 
-    public MessageView(MainActivity activity) {
-        mActivity = activity;
+    public MessageView(Context context) {
+        this.context = context;
     }
 
     public void start() {
         Intent intent = new Intent();
         intent.setClassName("com.android.mms", "com.android.mms.ui.ConversationList");
-        mActivity.startActivity(intent);
+        context.startActivity(intent);
     }
 }

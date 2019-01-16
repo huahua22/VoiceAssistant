@@ -85,9 +85,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mUnderstanderText = (TextView) findViewById(R.id.tv_answer);
         heartProgressBar = (HeartProgressBar) findViewById(R.id.progressBar);
         mFiveLine = (FiveLine) findViewById(R.id.fiveLine);
-
-        mUnderstanderText.setText("我能帮您做什么吗?");
-        speakAnswer("我能帮您做什么吗?");
+        mUnderstanderText.setText("我是voice,我能为您做什么呢");
+        speakAnswer("我是voice,我能为您做什么呢");
 
         findViewById(R.id.start_understander).setOnClickListener(MainActivity.this);
     }
@@ -548,9 +547,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         default:
                             break;
-
                     }
-
                     break;
                 }
 
