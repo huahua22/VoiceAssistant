@@ -11,7 +11,7 @@ import android.telephony.SmsManager;
 import android.util.Log;
 
 
-import com.example.administrator.voiceassistant.MainActivity;
+import com.example.administrator.voiceassistant.ui.MainActivity;
 
 import java.util.List;
 

@@ -6,7 +6,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 
 
-import com.example.administrator.voiceassistant.MainActivity;
+import com.example.administrator.voiceassistant.ui.MainActivity;
 
 import java.util.List;
 

@@ -1,16 +1,18 @@
-package com.example.administrator.voiceassistant;
+package com.example.administrator.voiceassistant.ui;
 
 import android.annotation.SuppressLint;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.administrator.voiceassistant.R;
 import com.example.administrator.voiceassistant.action.CallAction;
 import com.example.administrator.voiceassistant.action.OpenAppAction;
 import com.example.administrator.voiceassistant.action.OpenQA;
@@ -28,7 +30,6 @@ import com.example.administrator.voiceassistant.bean.SlotsBean;
 import com.example.administrator.voiceassistant.util.JsonParserUtil;
 import com.example.administrator.voiceassistant.view.CallView;
 import com.example.administrator.voiceassistant.view.FiveLine;
-import com.example.administrator.voiceassistant.view.HeartProgressBar;
 import com.example.administrator.voiceassistant.view.MessageView;
 import com.example.administrator.voiceassistant.view.ScheduleView;
 import com.iflytek.cloud.ErrorCode;
@@ -45,20 +46,20 @@ import com.iflytek.sunflower.FlowerCollector;
 
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+/**
+ * 主界面
+ */
+public class MainActivity extends Activity implements View.OnClickListener {
     private static String TAG = MainActivity.class.getSimpleName();
     private MainBean mMainBean;
     private SpeechUnderstander mSpeechUnderstander;
-    private Toast mToast;
-    private TextView mAskText, mUnderstanderText;
-    private HeartProgressBar heartProgressBar;
+    private TextView mAskText;
+    private TextView mUnderstanderText;
     private FiveLine mFiveLine;
-
+    private ImageButton speakButton;
     public static boolean service_flag = false;//表示是否在一项服务中
     public static String SRResult = "";    //识别结果
-
-    // 语音合成对象
-    private SpeechSynthesizer mTts;
+    private SpeechSynthesizer mTts;// 语音合成对象
 
 
     @SuppressLint("ShowToast")
@@ -66,13 +67,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+        //初始化
         SpeechUtility.createUtility(this, SpeechConstant.APPID + "=58057ac8");
-
-        // 初始化对象
+        //初始化语音理解
         mSpeechUnderstander = SpeechUnderstander.createUnderstander(MainActivity.this, mSpeechUdrInitListener);
-
-        mToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT);
-
+        // 初始化语音合成对象
         mTts = SpeechSynthesizer.createSynthesizer(MainActivity.this, mTtsInitListener);
         initLayout();
     }
@@ -81,14 +80,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * 初始化Layout。
      */
     private void initLayout() {
-        mAskText = (TextView) findViewById(R.id.tv_ask);
-        mUnderstanderText = (TextView) findViewById(R.id.tv_answer);
-        heartProgressBar = (HeartProgressBar) findViewById(R.id.progressBar);
-        mFiveLine = (FiveLine) findViewById(R.id.fiveLine);
+        mAskText = findViewById(R.id.tv_ask);
+        mUnderstanderText = findViewById(R.id.tv_answer);
+        mFiveLine = findViewById(R.id.fiveLine);
         mUnderstanderText.setText("我是voice,我能为您做什么呢");
         speakAnswer("我是voice,我能为您做什么呢");
-
-        findViewById(R.id.start_understander).setOnClickListener(MainActivity.this);
+        speakButton = findViewById(R.id.start_understander);
+        //按钮设置监听时间
+        speakButton.setOnClickListener(this);
     }
 
     int ret = 0;// 函数调用返回值
@@ -99,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // 开始语音理解
             case R.id.start_understander:
                 mFiveLine.setVisibility(View.INVISIBLE);
-                heartProgressBar.start();
+
                 mTts.stopSpeaking();
 
                 if (mSpeechUnderstander.isUnderstanding()) {// 开始前检查状态
@@ -108,9 +107,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 ret = mSpeechUnderstander.startUnderstanding(mSpeechUnderstanderListener);
                 if (ret != 0) {
-                    showTip("语义理解失败,错误码:" + ret);
+                    Toast.makeText(MainActivity.this, "语义理解失败,错误码:" + ret, Toast.LENGTH_SHORT).show();
                 } else {
-                    showTip("请开始说话…");
+                    Toast.makeText(MainActivity.this, "请开始说话…", Toast.LENGTH_SHORT).show();
                 }
 
                 break;
@@ -128,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onInit(int code) {
             Log.d(TAG, "speechUnderstanderListener init() code = " + code);
             if (code != ErrorCode.SUCCESS) {
-                showTip("初始化失败,错误码：" + code);
+                Log.d(TAG, "初始化失败,错误码：" + code);
             }
         }
     };
@@ -140,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onInit(int code) {
             Log.d(TAG, "InitListener init() code = " + code);
             if (code != ErrorCode.SUCCESS) {
-                showTip("初始化失败,错误码：" + code);
+                Log.d(TAG, "初始化失败,错误码：" + code);
             }
         }
     };
@@ -173,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             } else {
-                showTip("识别结果不正确。");
+                Log.d(TAG, "识别结果不正确。");
             }
         }
 
@@ -186,19 +185,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onEndOfSpeech() {
             // 此回调表示：检测到了语音的尾端点，已经进入识别过程，不再接受语音输入
-            //showTip("结束说话");
-            heartProgressBar.dismiss();
+            Log.d(TAG, "结束说话");
         }
 
         @Override
         public void onBeginOfSpeech() {
             // 此回调表示：sdk内部录音机已经准备好了，用户可以开始语音输入
-            //showTip("开始说话");
+            Log.d(TAG, "开始说话");
         }
 
         @Override
         public void onError(SpeechError error) {
-            showTip(error.getPlainDescription(true));
+            Log.d(TAG, error.getPlainDescription(true));
         }
 
         @Override
@@ -213,40 +211,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onSpeakBegin() {
-            //showTip("开始播放");
         }
 
         @Override
         public void onSpeakPaused() {
-            //showTip("暂停播放");
         }
 
         @Override
         public void onSpeakResumed() {
-            //showTip("继续播放");
         }
 
         @Override
         public void onBufferProgress(int percent, int beginPos, int endPos,
                                      String info) {
-            // 合成进度
-            //mPercentForBuffering = percent;
-            //showTip(String.format(getString(R.string.tts_toast_format),
-            //      mPercentForBuffering, mPercentForPlaying));
         }
 
         @Override
         public void onSpeakProgress(int percent, int beginPos, int endPos) {
-            // 播放进度
-            //mPercentForPlaying = percent;
-            //showTip(String.format(getString(R.string.tts_toast_format),
-            //       mPercentForBuffering, mPercentForPlaying));
         }
 
+        //回调完成
         @Override
         public void onCompleted(SpeechError error) {
             if (error == null) {
-                //showTip("播放完成");
+                //打印日志
+                Log.d(TAG, "播放完成");
                 mFiveLine.setVisibility(View.INVISIBLE);
             }
         }
@@ -259,46 +248,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void speakAnswer(String text) {
         // 移动数据分析，收集开始合成事件
         FlowerCollector.onEvent(MainActivity.this, "tts_play");
-
         int code = mTts.startSpeaking(text, mTtsListener);
         mFiveLine.setVisibility(View.VISIBLE);
         mUnderstanderText.setText(text);
         if (code != ErrorCode.SUCCESS) {
             if (code == ErrorCode.ERROR_COMPONENT_NOT_INSTALLED) {
                 //未安装则跳转到提示安装页面
-                showTip("请安装语记!");
+                Toast.makeText(MainActivity.this, "请安装语记!", Toast.LENGTH_SHORT).show();
             } else {
-                showTip("语音合成失败,错误码: " + code);
+                Toast.makeText(MainActivity.this, "语音合成失败,错误码:" + code, Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private void showTip(final String str) {
-        mToast.setText(str);
-        mToast.show();
-    }
-
-
     //语义场景判断
     private void judgeService() {
-
         SRResult = null;
         String service = mMainBean.getService();
         String operation = mMainBean.getOperation();
-
         AnswerBean answerBean = new AnswerBean();
         SlotsBean slotsBean = new SlotsBean();
         DatetimeBean datetimeBean = new DatetimeBean();
         ResultBean resultBean = new ResultBean();
         DataBean dataBean = new DataBean();
-
         String date = "该天";
-
         if (mMainBean.getAnswer() != null) {
             answerBean = mMainBean.getAnswer();
         }
-
-
         if (mMainBean.getSemantic() != null) {
             if (mMainBean.getSemantic().getSlots() != null) {
                 slotsBean = mMainBean.getSemantic().getSlots();
@@ -345,7 +321,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (service_flag == false) {//如果不在一项服务中才进行服务的判断
             switch (service) {
-
                 case "telephone":
                     switch (operation) {
                         case "CALL": {    //1打电话
@@ -444,97 +419,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         default:
                             break;
                     }
-
                     break;
-
                 }
 
                 case "chat": {//7 聊天相关服务
-
                     switch (operation) {
-
                         case "ANSWER": {//1聊天模式
-
                             OpenQA openQA = new OpenQA(answerBean.getText(), this);
                             openQA.start();
-
                             break;
                         }
-
                         default:
                             break;
                     }
-
                     break;
                 }
-
                 case "openQA": {//8 智能问答相关服务
-
                     switch (operation) {
 
                         case "ANSWER": {//1智能问答
-
                             OpenQA openQA = new OpenQA(answerBean.getText(), this);
                             openQA.start();
-
                             break;
                         }
-
                         default:
                             break;
                     }
-
                     break;
                 }
-
                 case "baike": {//9 百科知识相关服务
-
                     switch (operation) {
-
                         case "ANSWER": {//1百科
-
                             OpenQA openQA = new OpenQA(answerBean.getText(), this);
                             openQA.start();
-
                             break;
                         }
-
                         default:
                             break;
                     }
-
                     break;
                 }
 
                 case "schedule": {//10 日程相关服务
-
                     switch (operation) {
-
                         case "CREATE": {//1创建日程/闹钟(直接跳转相应设置界面)
-
                             ScheduleCreate scheduleCreate = new ScheduleCreate(slotsBean.getName(), datetimeBean.getTime(), datetimeBean.getDate(), slotsBean.getContent(), this);
                             scheduleCreate.start();
-
                             break;
                         }
-
-                        case "VIEW": {//1查看闹钟/日历(未实现)
-
-                            ScheduleView scheduleView = new ScheduleView(slotsBean.getName(), datetimeBean.getTime(), datetimeBean.getDate(), slotsBean.getContent(), this);
-                            scheduleView.start();
-                            break;
-                        }
-
-
                         default:
                             break;
                     }
-
                     break;
                 }
-
                 case "weather": {//11 天气相关服务
-
                     switch (operation) {
 
                         case "QUERY": {//1查询天气
@@ -544,13 +482,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             break;
                         }
-
                         default:
                             break;
                     }
                     break;
                 }
-
                 default:
                     mUnderstanderText.setText("我听不懂您说什么，亲爱的，下次可能我就明白了");
                     speakAnswer("我听不懂您说什么，亲爱的，下次可能我就明白了");
@@ -578,10 +514,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private long time = 0;
 
+
+    /**
+     * 退出程序
+     */
     public void exit() {
         if (System.currentTimeMillis() - time > 2000) {
             time = System.currentTimeMillis();
-            showTip("再点击一次退出应用程序");
+            Toast.makeText(MainActivity.this, "再点击一次退出应用程序", Toast.LENGTH_SHORT).show();
         } else {
             finish();
         }

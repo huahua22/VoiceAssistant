@@ -3,34 +3,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@mipmap/bg"
+    android:padding="15dp"
+    tools:context=".ui.MainActivity">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
+        <!--语音助手文本-->
         <TextView
             android:id="@+id/tv_answer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="20dp"
             android:text="我能帮您做什么吗?"
-            android:textColor="#222222"
-            android:textSize="22sp" />
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp" />
     </ScrollView>
 
 
+    <!--语音按钮-->
     <ImageButton
         android:id="@+id/start_understander"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/btn_selector"
-        android:text="确定" />
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/btn_selector" />
 
+    <!--语音转为的文字-->
     <TextView
         android:id="@+id/tv_ask"
         android:layout_width="match_parent"
@@ -42,16 +43,10 @@
         android:textColor="#ffffff"
         android:textSize="20sp" />
 
-    <com.example.administrator.voiceassistant.view.HeartProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
-
     <com.example.administrator.voiceassistant.view.FiveLine
         android:id="@+id/fiveLine"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_centerInParent="true"
         android:visibility="invisible" />
 

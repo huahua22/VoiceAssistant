@@ -3,7 +3,7 @@ package com.example.administrator.voiceassistant.action;
 import android.content.Intent;
 import android.net.Uri;
 
-import com.example.administrator.voiceassistant.MainActivity;
+import com.example.administrator.voiceassistant.ui.MainActivity;
 
 
 public class SearchAction {

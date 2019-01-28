@@ -3,7 +3,6 @@ package com.example.administrator.voiceassistant.view;
 import android.content.Context;
 import android.content.Intent;
 
-
 /**
  * 发信息界面
  */

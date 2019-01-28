@@ -10,24 +10,25 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 
 /**
- * Created by xwr
- * on 2019/1/11
+ * 动画线
  */
 public class FiveLine extends View {
+    //画笔
     private Paint paint;
     private boolean init = false;
+    //宽度
     private float width = 0;
     private float height = 0;
     private ValueAnimator valueAnimator;
     private float numb = 0;
     private boolean stop = false;
-    private float[] initLine = new float[]{0.6f, 0.3f, 0, 0.3f, 0.6f};
+    private float[] initLine = new float[]{0.6f, 0.1f, 0, 0.1f, 0.6f};
 
     public FiveLine(Context context, AttributeSet attrs) {
         super(context, attrs);
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setStrokeWidth(10);
-        paint.setColor(Color.parseColor("#ff0099cc"));
+        paint.setStrokeWidth(4);
+        paint.setColor(Color.parseColor("#ffffff"));
     }
 
     public void initLine(float[] floats) {

@@ -1,7 +1,7 @@
 package com.example.administrator.voiceassistant.action;
 
 
-import com.example.administrator.voiceassistant.MainActivity;
+import com.example.administrator.voiceassistant.ui.MainActivity;
 
 /**
  * 查询天气

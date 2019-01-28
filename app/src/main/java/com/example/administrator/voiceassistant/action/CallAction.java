@@ -12,7 +12,7 @@ import android.os.Message;
 import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 
-import com.example.administrator.voiceassistant.MainActivity;
+import com.example.administrator.voiceassistant.ui.MainActivity;
 
 
 /**

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">语音助手</string>
+    <string name="app_name">语音小助手</string>
 
     <!-- 请替换成在语音云官网申请的appid -->
     <string name="app_id">58057ac8</string>

@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
 
-import com.example.administrator.voiceassistant.MainActivity;
+import com.example.administrator.voiceassistant.ui.MainActivity;
 
 
 /**
